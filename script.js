@@ -580,6 +580,8 @@ const closeDrawer = document.querySelector("#close-drawer");
 const sidebar = document.querySelector("#contact-sidebar");
 const drawerBackdrop = document.querySelector("#drawer-backdrop");
 const locationSelect = document.querySelector("#location");
+const callResultSelect = document.querySelector("#call-result");
+const notInterestedReasons = document.querySelector("#not-interested-reasons");
 const otherLocationWrap = document.querySelector("#other-location-wrap");
 const otherLocationInput = document.querySelector("#other-location");
 const elevatorOption = document.querySelector("#elevator-option");
@@ -602,6 +604,51 @@ function telHref(phone) {
 
 function primaryPhone(contact) {
   return contact.phones[0];
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function sourceDetails(source) {
+  const urlMatch = source.match(/https?:\/\/[^\s)]+/);
+
+  if (urlMatch) {
+    const url = urlMatch[0];
+    return {
+      label: source.startsWith("Website") ? "Website" : "Open Link",
+      url,
+      text: source.replace(url, "").replace(/^Source:\s*/i, "").replace(/^Website:\s*/i, "").trim(),
+    };
+  }
+
+  if (/google maps/i.test(source)) {
+    return {
+      label: "Google Maps",
+      url: `https://www.google.com/maps/search/${encodeURIComponent(source.replace(/^Source:\s*/i, ""))}`,
+      text: "",
+    };
+  }
+
+  return {
+    label: "",
+    url: "",
+    text: source.replace(/^Source:\s*/i, ""),
+  };
+}
+
+function renderSource(source) {
+  const details = sourceDetails(source);
+  const text = details.text ? `<span class="source-text">${escapeHtml(details.text)}</span>` : "";
+  const button = details.url
+    ? `<a class="source-button" href="${escapeHtml(details.url)}" target="_blank" rel="noopener">${escapeHtml(details.label)}</a>`
+    : "";
+  return `<span class="source-row">${button}${text}</span>`;
 }
 
 function databasePayload() {
@@ -768,7 +815,7 @@ function renderContacts() {
       button.innerHTML = `
         <strong>${contact.name}</strong>
         <span>${contact.phones.map(formatPhone).join(" / ")}</span>
-        <span>${contact.propertyHistory}</span>
+        ${renderSource(contact.propertyHistory)}
         ${latest ? `<span class="result-label">${latest.callResult}</span>` : ""}
       `;
       button.addEventListener("click", () => {
@@ -791,7 +838,7 @@ function setActiveContact(index) {
     .map((phone) => `<a class="phone-link" href="${telHref(phone)}">${formatPhone(phone)}</a>`)
     .join("");
   startCall.href = telHref(primaryPhone(contact));
-  propertyHistory.textContent = contact.propertyHistory;
+  propertyHistory.innerHTML = renderSource(contact.propertyHistory);
   assessmentForm.reset();
   syncSmartFields();
   showTab("assessment");
@@ -839,9 +886,14 @@ async function saveAssessment(event) {
     callResult: formData.get("callResult"),
     location: selectedLocation === "Other" ? formData.get("otherLocation") || "Other" : selectedLocation,
     propertyType,
+    notInterestedReasons:
+      formData.get("callResult") === "Connected: Not Interested"
+        ? getCheckedValues(formData, "notInterestedReasons")
+        : [],
     offers: getCheckedValues(formData, "offers"),
     furnishing: propertyType === "Hotel" ? "Not needed for hotel" : formData.get("furnishing") || "Not selected",
-    price: formData.get("price") || "Not provided",
+    monthlyPrice: formData.get("monthlyPrice") || "Not provided",
+    dailyPrice: formData.get("dailyPrice") || "Not provided",
   };
 
   contacts[activeIndex].assessments.push(assessment);
@@ -865,7 +917,9 @@ function exportRows() {
       propertyType: assessment.propertyType,
       offers: formatList(assessment.offers),
       furnishing: assessment.furnishing,
-      price: assessment.price,
+      notInterestedReasons: formatList(assessment.notInterestedReasons || []),
+      monthlyPrice: assessment.monthlyPrice || assessment.price || "Not provided",
+      dailyPrice: assessment.dailyPrice || "Not provided",
     }))
   );
 }
@@ -897,7 +951,9 @@ function exportCsv() {
     "Property Type",
     "Offers",
     "Furnishing",
-    "Price",
+    "Not Interested Reasons",
+    "Monthly Rate",
+    "Daily Rate",
   ];
   const keys = [
     "contactName",
@@ -910,7 +966,9 @@ function exportCsv() {
     "propertyType",
     "offers",
     "furnishing",
-    "price",
+    "notInterestedReasons",
+    "monthlyPrice",
+    "dailyPrice",
   ];
   const csv = [headers.map(csvValue).join(",")]
     .concat(rows.map((row) => keys.map((key) => csvValue(row[key])).join(",")))
@@ -946,9 +1004,15 @@ function renderHistory() {
       <p><strong>Call Result:</strong> ${latest.callResult}</p>
       <p><strong>Location:</strong> ${latest.location}</p>
       <p><strong>Type:</strong> ${latest.propertyType}</p>
+      ${
+        latest.callResult === "Connected: Not Interested"
+          ? `<p><strong>Not Interested Reasons:</strong> ${formatList(latest.notInterestedReasons || [])}</p>`
+          : ""
+      }
       <p><strong>Offers:</strong> ${formatList(latest.offers)}</p>
       <p><strong>Furnishing:</strong> ${latest.furnishing}</p>
-      <p><strong>Price:</strong> ${latest.price}</p>
+      <p><strong>Monthly Rate:</strong> ${latest.monthlyPrice || latest.price || "Not provided"}</p>
+      <p><strong>Daily Rate:</strong> ${latest.dailyPrice || "Not provided"}</p>
     `;
     historyList.appendChild(card);
   }
@@ -956,7 +1020,16 @@ function renderHistory() {
 
 function syncSmartFields() {
   const selectedLocation = locationSelect.value;
+  const callResult = callResultSelect.value;
   const propertyType = new FormData(assessmentForm).get("propertyType");
+
+  const showNotInterestedReasons = callResult === "Connected: Not Interested";
+  notInterestedReasons.hidden = !showNotInterestedReasons;
+  if (!showNotInterestedReasons) {
+    notInterestedReasons.querySelectorAll("input").forEach((input) => {
+      input.checked = false;
+    });
+  }
 
   otherLocationWrap.hidden = selectedLocation !== "Other";
   otherLocationInput.required = selectedLocation === "Other";

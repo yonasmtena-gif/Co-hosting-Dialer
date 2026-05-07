@@ -88,6 +88,16 @@
             </select>
           </label>
 
+          <fieldset id="not-interested-reasons" class="option-grid" hidden>
+            <legend>Not Interested Reasons</legend>
+            <label><input type="checkbox" name="notInterestedReasons" value="Price too high" /> Price too high</label>
+            <label><input type="checkbox" name="notInterestedReasons" value="Has own management" /> Has own management</label>
+            <label><input type="checkbox" name="notInterestedReasons" value="Not renting now" /> Not renting now</label>
+            <label><input type="checkbox" name="notInterestedReasons" value="Long-term only" /> Long-term only</label>
+            <label><input type="checkbox" name="notInterestedReasons" value="Needs owner approval" /> Needs owner approval</label>
+            <label><input type="checkbox" name="notInterestedReasons" value="Bad timing" /> Bad timing</label>
+          </fieldset>
+
           <label>
             Location
             <select id="location" name="location" required>
@@ -134,10 +144,17 @@
             <label><input type="radio" name="furnishing" value="Not Furnished" /> Not Furnished</label>
           </fieldset>
 
-          <label>
-            Price
-            <input id="price" name="price" type="text" inputmode="decimal" placeholder="Example: 35,000 ETB / month" />
-          </label>
+          <div class="price-grid">
+            <label>
+              Monthly Rate
+              <input id="monthly-price" name="monthlyPrice" type="text" inputmode="decimal" placeholder="35,000 ETB / month" />
+            </label>
+
+            <label>
+              Daily Rate
+              <input id="daily-price" name="dailyPrice" type="text" inputmode="decimal" placeholder="2,500 ETB / night" />
+            </label>
+          </div>
 
           <button class="save-next" type="submit">Save & Next</button>
         </form>

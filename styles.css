@@ -135,6 +135,20 @@ select {
   padding: 12px;
 }
 
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.price-grid label {
+  display: grid;
+  gap: 7px;
+  color: #33463d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .contact-list {
   display: grid;
   gap: 10px;
@@ -190,6 +204,36 @@ select {
 
 .contact-item span {
   margin-top: 4px;
+  color: #52665c;
+  font-size: 13px;
+}
+
+.source-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px !important;
+}
+
+.source-button {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #b8c7bf;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #174fce;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 7px 9px;
+  text-decoration: none;
+}
+
+.source-button:hover {
+  background: #eef4ff;
+}
+
+.source-text {
   color: #52665c;
   font-size: 13px;
 }
@@ -633,5 +677,9 @@ input[type="radio"] {
 
   .start-call {
     padding: 17px;
+  }
+
+  .price-grid {
+    grid-template-columns: 1fr;
   }
 }
