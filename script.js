@@ -563,6 +563,7 @@ const contactList = document.querySelector("#contact-list");
 const contactName = document.querySelector("#contact-name");
 const contactPhones = document.querySelector("#contact-phones");
 const propertyHistory = document.querySelector("#property-history");
+const dashboardPanel = document.querySelector(".dashboard-panel");
 const search = document.querySelector("#search");
 const startCall = document.querySelector("#start-call");
 const timer = document.querySelector("#timer");
@@ -772,6 +773,9 @@ function renderContacts() {
       button.addEventListener("click", () => {
         setActiveContact(index);
         closeMobileDrawer();
+        if (window.matchMedia("(max-width: 980px)").matches) {
+          dashboardPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       });
       contactList.appendChild(button);
     });
@@ -789,6 +793,7 @@ function setActiveContact(index) {
   propertyHistory.textContent = contact.propertyHistory;
   assessmentForm.reset();
   syncSmartFields();
+  showTab("assessment");
   stopTimer();
   renderContacts();
 }

@@ -557,8 +557,12 @@ input[type="radio"] {
     position: fixed;
     inset: 0 auto 0 0;
     z-index: 30;
+    display: flex;
+    flex-direction: column;
     width: min(86vw, 360px);
+    max-height: 100dvh;
     border-radius: 0;
+    overflow: hidden;
     transform: translateX(-105%);
     transition: transform 0.22s ease;
   }
@@ -586,7 +590,15 @@ input[type="radio"] {
     font-size: 36px;
   }
 
-  .contact-list,
+  .contact-list {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    padding-bottom: 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .history-list {
     max-height: none;
   }
