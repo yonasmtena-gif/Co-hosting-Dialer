@@ -18,6 +18,11 @@ body {
   min-width: 320px;
 }
 
+body.drawer-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
 button,
 input,
 select {
@@ -560,9 +565,11 @@ input[type="radio"] {
     display: flex;
     flex-direction: column;
     width: min(86vw, 360px);
-    max-height: 100dvh;
+    height: 100dvh;
     border-radius: 0;
     overflow: hidden;
+    overscroll-behavior: contain;
+    touch-action: auto;
     transform: translateX(-105%);
     transition: transform 0.22s ease;
   }
@@ -595,8 +602,10 @@ input[type="radio"] {
     min-height: 0;
     max-height: none;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding-bottom: 24px;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 
   .history-list {

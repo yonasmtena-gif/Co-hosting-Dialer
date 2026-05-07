@@ -990,11 +990,13 @@ function showTab(tabName) {
 
 function openMobileDrawer() {
   sidebar.classList.add("open");
+  document.body.classList.add("drawer-open");
   drawerBackdrop.hidden = false;
 }
 
 function closeMobileDrawer() {
   sidebar.classList.remove("open");
+  document.body.classList.remove("drawer-open");
   drawerBackdrop.hidden = true;
 }
 
