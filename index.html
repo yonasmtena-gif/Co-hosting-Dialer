@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Co-hosting Dialer & Property Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-topbar">
+      <button id="open-drawer" class="icon-button" type="button" aria-label="Open contact list">☰</button>
+      <span>Co-hosting Dialer</span>
+    </div>
+
+    <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+
+    <main class="app-shell">
+      <aside id="contact-sidebar" class="contact-sidebar" aria-label="Contact list">
+        <div class="sidebar-header">
+          <div>
+            <p class="eyebrow">Pipeline</p>
+            <h1>Contacts</h1>
+          </div>
+          <button id="close-drawer" class="icon-button close-drawer" type="button" aria-label="Close contact list">×</button>
+        </div>
+
+        <label class="search-label">
+          Search
+          <input id="search" type="search" placeholder="Name, phone, property" />
+        </label>
+
+        <div id="contact-list" class="contact-list"></div>
+      </aside>
+
+      <section class="dialer-panel" aria-label="Active dialer">
+        <div class="panel-heading">
+          <p class="eyebrow">Active Dialer</p>
+          <h2 id="contact-name">Select a contact</h2>
+        </div>
+
+        <div class="profile-card">
+          <div>
+            <span class="field-label">Phone</span>
+            <div id="contact-phones" class="phone-links"></div>
+          </div>
+          <div>
+            <span class="field-label">Property History</span>
+            <p id="property-history" class="property-history">-</p>
+          </div>
+        </div>
+
+        <div class="call-box">
+          <div class="timer-row">
+            <span id="call-status" class="status-pill">Ready</span>
+            <span id="timer" class="timer">00:00</span>
+          </div>
+
+          <div id="waveform" class="waveform" aria-label="Audio waveform">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <a id="start-call" class="start-call" href="tel:+10000000000">Start Call</a>
+        </div>
+      </section>
+
+      <section class="dashboard-panel" aria-label="Property assessment dashboard">
+        <div class="tabs" role="tablist" aria-label="Dashboard tabs">
+          <button id="assessment-tab" class="tab active" type="button" role="tab" aria-selected="true">Property Assessment</button>
+          <button id="history-tab" class="tab" type="button" role="tab" aria-selected="false">History</button>
+        </div>
+
+        <form id="assessment-form" class="assessment-form">
+          <label>
+            Call Result
+            <select id="call-result" name="callResult" required>
+              <option value="">Select result</option>
+              <option>Connected: Interested</option>
+              <option>Connected: Not Interested</option>
+              <option>No Answer</option>
+              <option>Follow-up</option>
+            </select>
+          </label>
+
+          <label>
+            Location
+            <select id="location" name="location" required>
+              <option value="">Select neighborhood</option>
+              <option>Bole</option>
+              <option>Bole Medhanialem</option>
+              <option>Atlas</option>
+              <option>Kazanchis</option>
+              <option>Piassa</option>
+              <option>Megenagna</option>
+              <option>CMC</option>
+              <option>Summit</option>
+              <option>Sar Bet</option>
+              <option>Mexico</option>
+              <option>Gerji</option>
+              <option>Old Airport</option>
+              <option value="Other">Other - type manually</option>
+            </select>
+          </label>
+
+          <label id="other-location-wrap" hidden>
+            Other Location
+            <input id="other-location" name="otherLocation" type="text" placeholder="Type location" />
+          </label>
+
+          <fieldset class="option-grid">
+            <legend>Property Type</legend>
+            <label><input type="radio" name="propertyType" value="Villa" required /> Villa</label>
+            <label><input type="radio" name="propertyType" value="Hotel" /> Hotel</label>
+            <label><input type="radio" name="propertyType" value="Building" /> Building</label>
+          </fieldset>
+
+          <fieldset id="offers-fieldset" class="option-grid">
+            <legend>Location Offers</legend>
+            <label><input type="checkbox" name="offers" value="Washing Machine" /> Washing Machine</label>
+            <label id="elevator-option"><input type="checkbox" name="offers" value="Elevator" /> Elevator</label>
+            <label><input type="checkbox" name="offers" value="Parking" /> Parking</label>
+            <label><input type="checkbox" name="offers" value="WiFi" /> WiFi</label>
+          </fieldset>
+
+          <fieldset id="furnishing-fieldset" class="option-grid">
+            <legend>Furnishing</legend>
+            <label><input type="radio" name="furnishing" value="Furnished" /> Furnished</label>
+            <label><input type="radio" name="furnishing" value="Not Furnished" /> Not Furnished</label>
+          </fieldset>
+
+          <label>
+            Price
+            <input id="price" name="price" type="text" inputmode="decimal" placeholder="Example: 35,000 ETB / month" />
+          </label>
+
+          <button class="save-next" type="submit">Save & Next</button>
+        </form>
+
+        <section id="history-view" class="history-view" hidden>
+          <div class="export-actions">
+            <button id="export-csv" class="export-button" type="button">Export CSV</button>
+            <button id="export-json" class="export-button secondary-export" type="button">Export JSON</button>
+          </div>
+          <p id="history-summary" class="history-summary">Saved calls: 0</p>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
