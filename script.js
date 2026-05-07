@@ -590,6 +590,7 @@ const exportJsonButton = document.querySelector("#export-json");
 let activeIndex = 0;
 let callStartedAt = null;
 let timerId = null;
+let drawerScrollY = 0;
 
 function formatPhone(phone) {
   return phone;
@@ -989,15 +990,25 @@ function showTab(tabName) {
 }
 
 function openMobileDrawer() {
+  drawerScrollY = window.scrollY;
   sidebar.classList.add("open");
   document.body.classList.add("drawer-open");
+  document.body.style.top = `-${drawerScrollY}px`;
   drawerBackdrop.hidden = false;
 }
 
 function closeMobileDrawer() {
   sidebar.classList.remove("open");
   document.body.classList.remove("drawer-open");
+  document.body.style.top = "";
+  window.scrollTo(0, drawerScrollY);
   drawerBackdrop.hidden = true;
+}
+
+function preventPageScrollWhenDrawerOpen(event) {
+  if (!document.body.classList.contains("drawer-open")) return;
+  if (event.target.closest("#contact-list")) return;
+  event.preventDefault();
 }
 
 search.addEventListener("input", renderContacts);
@@ -1011,6 +1022,7 @@ exportJsonButton.addEventListener("click", exportJson);
 openDrawer.addEventListener("click", openMobileDrawer);
 closeDrawer.addEventListener("click", closeMobileDrawer);
 drawerBackdrop.addEventListener("click", closeMobileDrawer);
+document.addEventListener("touchmove", preventPageScrollWhenDrawerOpen, { passive: false });
 
 async function init() {
   await loadDatabase();
